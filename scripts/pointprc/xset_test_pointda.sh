@@ -1,6 +1,6 @@
 # 2024/05/02
 
-TRAINER=PointPRC
+TRAINER=PointPRC_ManiPT
 DATA_TYPE=pointda
 CFG=custom_ulip
 SHOTS=16                    # e.g., 16

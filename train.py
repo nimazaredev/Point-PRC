@@ -29,6 +29,7 @@ import trainers.maple
 import trainers.independentVL
 
 import trainers.pointprc
+import trainers.pointprc_manipt
 # NOTE for ablation purpose
 # import trainers.pointprc_uniform
 # import trainers.pointprc_mse
@@ -149,6 +150,22 @@ def extend_cfg(cfg):
     cfg.TRAINER.PointPRC.NO_MAC = False
     cfg.TRAINER.PointPRC.NO_TDC = False
     cfg.TRAINER.PointPRC.NO_MEC = False
+
+
+    # Config for PointPRC + ManiPT (your contribution)
+    cfg.TRAINER.PointPRC_ManiPT = CN()
+    cfg.TRAINER.PointPRC_ManiPT.EVAL_ONLY = False
+    cfg.TRAINER.PointPRC_ManiPT.N_CTX_POINT = 4
+    cfg.TRAINER.PointPRC_ManiPT.N_CTX_TEXT = 4
+    cfg.TRAINER.PointPRC_ManiPT.CTX_INIT = "a photo of a"
+    cfg.TRAINER.PointPRC_ManiPT.PREC = "fp32"
+    cfg.TRAINER.PointPRC_ManiPT.PROMPT_DEPTH_POINT = 9
+    cfg.TRAINER.PointPRC_ManiPT.PROMPT_DEPTH_TEXT = 9
+    cfg.TRAINER.PointPRC_ManiPT.PROMPT_TYPE = "manual64"
+    cfg.TRAINER.PointPRC_ManiPT.NO_TDC = False
+    cfg.TRAINER.PointPRC_ManiPT.LAMBDA_REG = 1.0
+    cfg.TRAINER.PointPRC_ManiPT.TAU = 100.0
+    cfg.TRAINER.PointPRC_ManiPT.D_PCA = 64
 
     # Config for independent Vision Language prompting (independent-vlp)
     cfg.TRAINER.IVLP = CN()

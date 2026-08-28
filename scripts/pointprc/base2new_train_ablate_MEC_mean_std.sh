@@ -1,6 +1,6 @@
 # 2024/04/03
 
-TRAINER=PointPRC
+TRAINER=PointPRC_ManiPT
 
 # custom config
 GPU_ID=$1       # e.g., 0

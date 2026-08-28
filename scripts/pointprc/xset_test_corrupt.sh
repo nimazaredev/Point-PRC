@@ -1,7 +1,7 @@
 # 2024/03/29
 # NOTE: This script is suitable for `modelnet_c` & `modelnet40_c` dataset
 
-TRAINER=PointPRC
+TRAINER=PointPRC_ManiPT
 PROMPT_TYPE=manual64
 CFG=custom_ulip_few_shot
 SHOTS=16

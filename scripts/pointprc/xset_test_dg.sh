@@ -1,6 +1,6 @@
 # 2024/04/12
 
-TRAINER=PointPRC
+TRAINER=PointPRC_ManiPT
 CFG=custom_ulip_few_shot
 SHOTS=16
 
