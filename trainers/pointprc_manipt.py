@@ -55,7 +55,7 @@ class CustomULIP_ManiPT(nn.Module):
             f_txt = self.fusion(z_txt, h_txt)       # (C, D)
 
             # --- Module C: classification logits ---
-            logits = self.tau * (f_3d @ f_txt.t())  # (B, C)
+            logits = self.logit_scale.exp() * (f_3d @ f_txt.t())  # (B, C)
 
             w_text_proto = z_txt   # LLM-enriched semantic prototypes (already normalized)
 
@@ -70,7 +70,7 @@ class CustomULIP_ManiPT(nn.Module):
 
             f_3d = self.fusion(z_3d, h_3d)
             f_txt = self.fusion(z_txt, h_txt)
-            logits = self.tau * (f_3d @ f_txt.t())
+            logits = self.logit_scale.exp() * (f_3d @ f_txt.t())
             return logits
 
 
