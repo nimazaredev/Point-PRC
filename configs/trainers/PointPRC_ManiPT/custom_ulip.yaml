@@ -57,5 +57,32 @@ TRAINER:
     TAU: 100.0
     D_PCA: 64
 
+# ======== [NEW - ADD] everything from here down to the line "TEST_ROT_SEED" is NEW ========
+    # ---------------- rotation extension (all defaults = original ManiPT, i.e. E0) ----------------
+    ROT_MODE: "none"            # none | so2 | so3 | axis_angle   (train-time rotation, 2 views per sample)
+    ROT_MAX_DEG: 180.0          # so2 / axis_angle only
+    ROT_AXIS: "z"               # so2 only: rotation axis (x|y|z); z, same as the reference paper
+    ROT_FIRST_IDENTITY: False   # True: view1 = original, view2 = rotated
+    SCALE_MIN: 0.8              # random scaling per view, s ~ U[SCALE_MIN, SCALE_MAX]; 1.0/1.0 = off
+    SCALE_MAX: 1.2              # reference paper: 0.8 / 1.2
+ 
+    GAMMA_S: 0.0                # idea 1 weight (sensitive-subspace penalty)
+    GAMMA_S_SCHEDULE: "const"   # const | linear_decay
+    SUBSPACE_PATH: ""           # .pt from compute_rot_subspace.py
+    SUBSPACE_MODE: "sens"       # sens (M=P_rot) | complement (M=I-P_rot) | soft (M=D*Sigma/trSigma)
+    SUBSPACE_K: 0               # 0 -> choose k by SUBSPACE_ENERGY
+    SUBSPACE_ENERGY: 0.9
+ 
+    GAMMA_INV: 0.0              # idea 2 weight (invariance between the two views)
+    INV_KIND: "h"               # h | f | kl
+    INV_STOPGRAD: False
+ 
+    TEST_ROT_MODE: "none"       # none | so2 | so3 | axis_angle  (rotate TEST split at evaluation)
+    TEST_ROT_MAX_DEG: 180.0
+    TEST_ROT_AXIS: "z"
+    TEST_ROT_SEED: 2024
+ 
+
+
 TEST:
   FINAL_MODEL: 'best_val'

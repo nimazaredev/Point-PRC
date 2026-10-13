@@ -166,6 +166,11 @@ def extend_cfg(cfg):
     cfg.TRAINER.PointPRC_ManiPT.LAMBDA_REG = 1.0
     cfg.TRAINER.PointPRC_ManiPT.TAU = 100.0
     cfg.TRAINER.PointPRC_ManiPT.D_PCA = 64
+    cfg.TRAINER.PointPRC_ManiPT.ROT_AXIS = "z"
+    cfg.TRAINER.PointPRC_ManiPT.ROT_FIRST_IDENTITY = False
+    cfg.TRAINER.PointPRC_ManiPT.SCALE_MIN = 0.8             # 1.0/1.0 = scaling off
+    cfg.TRAINER.PointPRC_ManiPT.SCALE_MAX = 1.2
+    cfg.TRAINER.PointPRC_ManiPT.TEST_ROT_AXIS = "z"
 
     # Config for independent Vision Language prompting (independent-vlp)
     cfg.TRAINER.IVLP = CN()
