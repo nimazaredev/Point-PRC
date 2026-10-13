@@ -255,7 +255,7 @@ class PointPRC_ManiPT(TrainerX):
  
         return summary
 
-     def test(self, split=None):
+    def test(self, split=None):
         self._test_split = split
         if self.test_rot_mode != "none":
             rc = self.cfg.TRAINER.PointPRC_ManiPT

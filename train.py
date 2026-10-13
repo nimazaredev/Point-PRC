@@ -171,6 +171,20 @@ def extend_cfg(cfg):
     cfg.TRAINER.PointPRC_ManiPT.SCALE_MIN = 0.8             # 1.0/1.0 = scaling off
     cfg.TRAINER.PointPRC_ManiPT.SCALE_MAX = 1.2
     cfg.TRAINER.PointPRC_ManiPT.TEST_ROT_AXIS = "z"
+     cfg.TRAINER.PointPRC_ManiPT.ROT_MODE = "none"
+    cfg.TRAINER.PointPRC_ManiPT.ROT_MAX_DEG = 180.0
+    cfg.TRAINER.PointPRC_ManiPT.GAMMA_S = 0.0
+    cfg.TRAINER.PointPRC_ManiPT.GAMMA_S_SCHEDULE = "const"
+    cfg.TRAINER.PointPRC_ManiPT.SUBSPACE_PATH = ""
+    cfg.TRAINER.PointPRC_ManiPT.SUBSPACE_MODE = "sens"
+    cfg.TRAINER.PointPRC_ManiPT.SUBSPACE_K = 0
+    cfg.TRAINER.PointPRC_ManiPT.SUBSPACE_ENERGY = 0.9
+    cfg.TRAINER.PointPRC_ManiPT.GAMMA_INV = 0.0
+    cfg.TRAINER.PointPRC_ManiPT.INV_KIND = "h"
+    cfg.TRAINER.PointPRC_ManiPT.INV_STOPGRAD = False
+    cfg.TRAINER.PointPRC_ManiPT.TEST_ROT_MODE = "none"
+    cfg.TRAINER.PointPRC_ManiPT.TEST_ROT_MAX_DEG = 180.0
+    cfg.TRAINER.PointPRC_ManiPT.TEST_ROT_SEED = 2024
 
     # Config for independent Vision Language prompting (independent-vlp)
     cfg.TRAINER.IVLP = CN()

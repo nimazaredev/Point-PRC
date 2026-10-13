@@ -10,7 +10,7 @@ Notation follows the spec:
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
+import math
 
 class NormalizedAdditiveFusion(nn.Module):
     """f = normalize(z + h), eps for numerical stability."""
