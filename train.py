@@ -171,7 +171,7 @@ def extend_cfg(cfg):
     cfg.TRAINER.PointPRC_ManiPT.SCALE_MIN = 0.8             # 1.0/1.0 = scaling off
     cfg.TRAINER.PointPRC_ManiPT.SCALE_MAX = 1.2
     cfg.TRAINER.PointPRC_ManiPT.TEST_ROT_AXIS = "z"
-     cfg.TRAINER.PointPRC_ManiPT.ROT_MODE = "none"
+    cfg.TRAINER.PointPRC_ManiPT.ROT_MODE = "none"
     cfg.TRAINER.PointPRC_ManiPT.ROT_MAX_DEG = 180.0
     cfg.TRAINER.PointPRC_ManiPT.GAMMA_S = 0.0
     cfg.TRAINER.PointPRC_ManiPT.GAMMA_S_SCHEDULE = "const"
