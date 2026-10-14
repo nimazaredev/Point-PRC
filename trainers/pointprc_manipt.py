@@ -14,7 +14,7 @@ from .pointprc import load_ulip_to_cpu, TextEncoder, VLPromptLearner
 from .manipt_modules import (
     NormalizedAdditiveFusion, ManiPTLoss, calculate_manifold_drift,
     sample_rotations, apply_rotation, RotationSubspace, RotationInvarianceLoss,
-    sample_scales, apply_scale,
+    sample_scales, apply_scale,corrupt_points,
 )
 
 class CustomULIP_ManiPT(nn.Module):
@@ -130,6 +130,8 @@ class PointPRC_ManiPT(TrainerX):
         self.gamma_s = float(rc.GAMMA_S)
         self.gamma_inv = float(rc.GAMMA_INV)
         self.anchor_clean = bool(rc.ANCHOR_CLEAN)
+        self.aug_mode = rc.AUG_MODE
+        self.aug_ops = tuple(o.strip() for o in rc.AUG_OPS.split(",") if o.strip())
 
         if self.rot_mode == "none" and (self.gamma_s > 0 or self.gamma_inv > 0):
             raise ValueError("GAMMA_S / GAMMA_INV > 0 requires ROT_MODE != 'none' "
@@ -166,6 +168,9 @@ class PointPRC_ManiPT(TrainerX):
     def _make_views(self, pts):
         """Returns a list of views. 'none' -> [pts]; otherwise exactly 2 rotated views."""
         rc = self.cfg.TRAINER.PointPRC_ManiPT
+        if self.aug_mode == "corrupt":
+            bad = corrupt_points(pts, self.rot_gen, self.aug_ops, rc.AUG_MAX_DROP, rc.AUG_JITTER)
+            return [pts, bad]
         if self.rot_mode == "none":
             return [pts]
         views = []

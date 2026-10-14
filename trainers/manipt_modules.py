@@ -297,3 +297,46 @@ class RotationInvarianceLoss(nn.Module):
         kl12 = F.kl_div(F.log_softmax(l1, -1), F.softmax(t1, -1), reduction="batchmean")
         kl21 = F.kl_div(F.log_softmax(l2, -1), F.softmax(t2, -1), reduction="batchmean")
         return 0.5 * (kl12 + kl21)
+
+def _refill(xyz, keep_idx, gen):
+    N, M = xyz.shape[0], keep_idx.shape[0]
+    if M < N:
+        extra = keep_idx[torch.randint(0, M, (N - M,), generator=gen)]
+        keep_idx = torch.cat([keep_idx, extra])
+    return xyz[keep_idx[:N]]
+
+
+def corrupt_points(pts, gen, ops=("occ", "drop", "density", "outlier"),
+                   max_drop=0.4, jitter_std=0.01):
+    B, N, C = pts.shape
+    out = pts.clone()
+    for b in range(B):
+        xyz = pts[b, :, :3]
+        op = ops[int(torch.randint(0, len(ops), (1,), generator=gen))]
+        u = lambda lo, hi: lo + (hi - lo) * float(torch.rand(1, generator=gen))
+        if op == "occ":        # occlusion محلی
+            c = xyz[int(torch.randint(0, N, (1,), generator=gen))]
+            k = int(N * u(0.1, max_drop))
+            d = ((xyz - c) ** 2).sum(-1)
+            keep = torch.topk(d, N - k, largest=True).indices
+            new = _refill(xyz, keep, gen)
+        elif op == "drop":     # نمونه‌گیری خلوت‌تر
+            m = N - int(N * u(0.1, max_drop + 0.1))
+            keep = torch.randperm(N, generator=gen)[:m].to(xyz.device)
+            new = _refill(xyz, keep, gen)
+        elif op == "density":  # تراکم غیریکنواخت
+            c = xyz[int(torch.randint(0, N, (1,), generator=gen))]
+            d = ((xyz - c) ** 2).sum(-1)
+            w = torch.exp(-d / (d.mean() * u(0.5, 2.0) + 1e-8)).cpu() + 1e-4
+            m = N - int(N * u(0.1, max_drop + 0.2))
+            keep = torch.multinomial(w, m, replacement=False, generator=gen).to(xyz.device)
+            new = _refill(xyz, keep, gen)
+        else:                  # outlier
+            n = int(N * u(0.02, 0.1))
+            new = xyz.clone()
+            idx = torch.randperm(N, generator=gen)[:n].to(xyz.device)
+            new[idx] = (torch.rand(n, 3, generator=gen) * 2 - 1).to(xyz.device, xyz.dtype)
+        if jitter_std > 0:
+            new = new + (jitter_std * torch.randn(N, 3, generator=gen)).clamp(-0.05, 0.05).to(new.device, new.dtype)
+        out[b, :, :3] = new
+    return out
