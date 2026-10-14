@@ -185,7 +185,7 @@ def extend_cfg(cfg):
     cfg.TRAINER.PointPRC_ManiPT.TEST_ROT_MODE = "none"
     cfg.TRAINER.PointPRC_ManiPT.TEST_ROT_MAX_DEG = 180.0
     cfg.TRAINER.PointPRC_ManiPT.TEST_ROT_SEED = 2024
-
+    cfg.TRAINER.PointPRC_ManiPT.ANCHOR_CLEAN = False
     # Config for independent Vision Language prompting (independent-vlp)
     cfg.TRAINER.IVLP = CN()
     cfg.TRAINER.IVLP.EVAL_ONLY = False

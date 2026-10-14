@@ -129,7 +129,8 @@ class PointPRC_ManiPT(TrainerX):
         self.rot_mode = rc.ROT_MODE
         self.gamma_s = float(rc.GAMMA_S)
         self.gamma_inv = float(rc.GAMMA_INV)
- 
+        self.anchor_clean = bool(rc.ANCHOR_CLEAN)
+
         if self.rot_mode == "none" and (self.gamma_s > 0 or self.gamma_inv > 0):
             raise ValueError("GAMMA_S / GAMMA_INV > 0 requires ROT_MODE != 'none' "
                              "(both losses are defined on rotated views).")
@@ -199,11 +200,20 @@ class PointPRC_ManiPT(TrainerX):
         h3 = out["h_3d"].chunk(V)
         lg = out["logits"].chunk(V)
         yy = y.chunk(V)
- 
+
+        # canonical anchor: frozen feature of the ORIGINAL (unrotated) input
+        z_clean = None
+        if self.anchor_clean:
+            with torch.no_grad():
+                m = self.model.module if isinstance(self.model, nn.DataParallel) else self.model
+                zc = m.prompt_learner.frozen_point_encoder(pts) @ m.pc_projection
+                z_clean = zc / zc.norm(dim=-1, keepdim=True)          # (B, D)
+
         # L_aug = mean_j [CE_j + lam (L3D_j + Ltxt)]   (same views for E1..E4)
         tot, ce, l3d, ltxt = 0.0, 0.0, 0.0, 0.0
         for j in range(V):
-            t, c, a, b = self.criterion(f3[j], z3[j], out["f_txt"], out["w_txt"], lg[j], yy[j])
+            anchor = z_clean if z_clean is not None else z3[j]
+            t, c, a, b = self.criterion(f3[j], anchor, out["f_txt"], out["w_txt"], lg[j], yy[j])
             tot, ce, l3d, ltxt = tot + t, ce + c, l3d + a, ltxt + b
         total = tot / V
         summary = {"l_ce": ce.item() / V, "l_3d": l3d.item() / V, "l_txt": ltxt.item() / V}

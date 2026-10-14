@@ -76,11 +76,13 @@ TRAINER:
     GAMMA_INV: 0.0              # idea 2 weight (invariance between the two views)
     INV_KIND: "h"               # h | f | kl
     INV_STOPGRAD: False
- 
+    ANCHOR_CLEAN: False
+    
     TEST_ROT_MODE: "none"       # none | so2 | so3 | axis_angle  (rotate TEST split at evaluation)
     TEST_ROT_MAX_DEG: 180.0
     TEST_ROT_AXIS: "z"
     TEST_ROT_SEED: 2024
+    
  
 
 
