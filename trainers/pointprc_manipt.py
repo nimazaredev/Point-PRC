@@ -168,20 +168,20 @@ class PointPRC_ManiPT(TrainerX):
     def _make_views(self, pts):
         rc = self.cfg.TRAINER.PointPRC_ManiPT
         if rc.N_VIEWS > 0:
-        views = []
-        for j in range(rc.N_VIEWS):
-            if j < rc.N_CLEAN_VIEWS:
-                views.append(pts)
-                continue
-            if self.aug_mode == "corrupt":
-                views.append(corrupt_points(pts, self.rot_gen, self.aug_ops,
-                                            rc.AUG_MAX_DROP, rc.AUG_JITTER))
-            else:
-                R = sample_rotations(pts.shape[0], self.rot_mode, rc.ROT_MAX_DEG,
-                                     rc.ROT_AXIS, self.rot_gen, pts.device)
-                S = sample_scales(pts.shape[0], rc.SCALE_MIN, rc.SCALE_MAX,
-                                  self.rot_gen, pts.device)
-                views.append(apply_scale(apply_rotation(pts, R), S))
+            views = []
+            for j in range(rc.N_VIEWS):
+                if j < rc.N_CLEAN_VIEWS:
+                    views.append(pts)
+                    continue
+                if self.aug_mode == "corrupt":
+                    views.append(corrupt_points(pts, self.rot_gen, self.aug_ops,
+                                                rc.AUG_MAX_DROP, rc.AUG_JITTER))
+                else:
+                    R = sample_rotations(pts.shape[0], self.rot_mode, rc.ROT_MAX_DEG,
+                                        rc.ROT_AXIS, self.rot_gen, pts.device)
+                    S = sample_scales(pts.shape[0], rc.SCALE_MIN, rc.SCALE_MAX,
+                                    self.rot_gen, pts.device)
+                    views.append(apply_scale(apply_rotation(pts, R), S))
         return views
  
     def _gamma_s_now(self):
