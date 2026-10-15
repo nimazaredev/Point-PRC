@@ -65,7 +65,10 @@ TRAINER:
     ROT_FIRST_IDENTITY: False   # True: view1 = original, view2 = rotated
     SCALE_MIN: 0.8              # random scaling per view, s ~ U[SCALE_MIN, SCALE_MAX]; 1.0/1.0 = off
     SCALE_MAX: 1.2              # reference paper: 0.8 / 1.2
- 
+    N_VIEWS: 2
+    N_CLEAN_VIEWS: 1
+
+
     GAMMA_S: 0.0                # idea 1 weight (sensitive-subspace penalty)
     GAMMA_S_SCHEDULE: "const"   # const | linear_decay
     SUBSPACE_PATH: ""           # .pt from compute_rot_subspace.py

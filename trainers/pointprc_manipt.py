@@ -166,24 +166,22 @@ class PointPRC_ManiPT(TrainerX):
     
     
     def _make_views(self, pts):
-        """Returns a list of views. 'none' -> [pts]; otherwise exactly 2 rotated views."""
         rc = self.cfg.TRAINER.PointPRC_ManiPT
-        if self.aug_mode == "corrupt":
-            bad = corrupt_points(pts, self.rot_gen, self.aug_ops, rc.AUG_MAX_DROP, rc.AUG_JITTER)
-            return [pts, bad]
-        if self.rot_mode == "none":
-            return [pts]
+        if rc.N_VIEWS > 0:
         views = []
-        for j in range(2):
-            if j == 0 and rc.ROT_FIRST_IDENTITY:
+        for j in range(rc.N_VIEWS):
+            if j < rc.N_CLEAN_VIEWS:
                 views.append(pts)
                 continue
-            R = sample_rotations(pts.shape[0], self.rot_mode, rc.ROT_MAX_DEG,
-                                 rc.ROT_AXIS, self.rot_gen, pts.device)
-            v = apply_rotation(pts, R)
-            # optional random scaling (off when SCALE_MIN = SCALE_MAX = 1.0)
-            S = sample_scales(pts.shape[0], rc.SCALE_MIN, rc.SCALE_MAX, self.rot_gen, pts.device)
-            views.append(apply_scale(v, S))
+            if self.aug_mode == "corrupt":
+                views.append(corrupt_points(pts, self.rot_gen, self.aug_ops,
+                                            rc.AUG_MAX_DROP, rc.AUG_JITTER))
+            else:
+                R = sample_rotations(pts.shape[0], self.rot_mode, rc.ROT_MAX_DEG,
+                                     rc.ROT_AXIS, self.rot_gen, pts.device)
+                S = sample_scales(pts.shape[0], rc.SCALE_MIN, rc.SCALE_MAX,
+                                  self.rot_gen, pts.device)
+                views.append(apply_scale(apply_rotation(pts, R), S))
         return views
  
     def _gamma_s_now(self):
@@ -232,7 +230,9 @@ class PointPRC_ManiPT(TrainerX):
  
         # idea 2: invariance between the two views
         if self.inv_loss is not None:
-            l_inv = self.inv_loss(h3[0], h3[1], f3[0], f3[1], lg[0], lg[1])
+            pairs = [(0, 1)] if V == 2 else [(i, (i + 1) % V) for i in range(V)]
+            l_inv = sum(self.inv_loss(h3[i], h3[j], f3[i], f3[j], lg[i], lg[j])
+                        for i, j in pairs) / len(pairs)
             total = total + self.gamma_inv * l_inv
             summary["l_inv"] = l_inv.item()
  

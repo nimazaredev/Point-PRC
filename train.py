@@ -190,6 +190,8 @@ def extend_cfg(cfg):
     cfg.TRAINER.PointPRC_ManiPT.AUG_OPS = "occ,drop,density,outlier"
     cfg.TRAINER.PointPRC_ManiPT.AUG_MAX_DROP = 0.4
     cfg.TRAINER.PointPRC_ManiPT.AUG_JITTER = 0.01
+    cfg.TRAINER.PointPRC_ManiPT.N_VIEWS = 2          # 0 = رفتار قدیمی (۲ ویو)
+    cfg.TRAINER.PointPRC_ManiPT.N_CLEAN_VIEWS = 1 
 
     # Config for independent Vision Language prompting (independent-vlp)
     cfg.TRAINER.IVLP = CN()
