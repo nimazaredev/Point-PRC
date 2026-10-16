@@ -178,10 +178,11 @@ class PointPRC_ManiPT(TrainerX):
                                                 rc.AUG_MAX_DROP, rc.AUG_JITTER))
                 else:
                     R = sample_rotations(pts.shape[0], self.rot_mode, rc.ROT_MAX_DEG,
-                                        rc.ROT_AXIS, self.rot_gen, pts.device)
+                         rc.ROT_AXIS, self.rot_gen, pts.device)
                     S = sample_scales(pts.shape[0], rc.SCALE_MIN, rc.SCALE_MAX,
-                                    self.rot_gen, pts.device)
-                    views.append(apply_scale(apply_rotation(pts, R), S))
+                                    self.rot_gen, pts.device,
+                                    mode=rc.SCALE_MODE, vol_preserve=rc.SCALE_VOL_PRESERVE)
+                    views.append(apply_rotation(apply_scale(pts, S), R))
         return views
  
     def _gamma_s_now(self):

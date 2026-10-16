@@ -194,12 +194,19 @@ def apply_rotation(pts: torch.Tensor, R) -> torch.Tensor:
 # ----------------------------------------------------------------------------
 # [NEW - ADD] Random isotropic scaling
 # ----------------------------------------------------------------------------
-def sample_scales(B, s_min=1.0, s_max=1.0, generator=None, device="cpu"):
-    """s ~ U[s_min, s_max] per sample, returns (B,1,1) or None if scaling is off (s_min=s_max=1)."""
+def sample_scales(B, s_min=1.0, s_max=1.0, generator=None, device="cpu",
+                  mode="iso", vol_preserve=False):
     if s_min == 1.0 and s_max == 1.0:
         return None
-    s = s_min + (s_max - s_min) * torch.rand(B, generator=generator)
-    return s.view(B, 1, 1).to(device)
+    if mode == "iso":
+        s = s_min + (s_max - s_min) * torch.rand(B, generator=generator)
+        return s.view(B, 1, 1).to(device)
+    if mode == "aniso":
+        s = s_min + (s_max - s_min) * torch.rand(B, 3, generator=generator)
+        if vol_preserve:
+            s = s / s.prod(dim=-1, keepdim=True).pow(1.0 / 3.0)
+        return s.view(B, 1, 3).to(device)
+    raise ValueError(f"Unknown scale mode: {mode}")
 
 
 def apply_scale(pts: torch.Tensor, s) -> torch.Tensor:

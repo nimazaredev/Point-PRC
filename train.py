@@ -192,6 +192,8 @@ def extend_cfg(cfg):
     cfg.TRAINER.PointPRC_ManiPT.AUG_JITTER = 0.01
     cfg.TRAINER.PointPRC_ManiPT.N_VIEWS = 2          # 0 = رفتار قدیمی (۲ ویو)
     cfg.TRAINER.PointPRC_ManiPT.N_CLEAN_VIEWS = 1 
+    cfg.TRAINER.PointPRC_ManiPT.SCALE_MODE = "iso"
+    cfg.TRAINER.PointPRC_ManiPT.SCALE_VOL_PRESERVE = False
 
     # Config for independent Vision Language prompting (independent-vlp)
     cfg.TRAINER.IVLP = CN()

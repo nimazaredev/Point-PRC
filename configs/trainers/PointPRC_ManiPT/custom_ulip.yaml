@@ -65,6 +65,8 @@ TRAINER:
     ROT_FIRST_IDENTITY: False   # True: view1 = original, view2 = rotated
     SCALE_MIN: 0.8              # random scaling per view, s ~ U[SCALE_MIN, SCALE_MAX]; 1.0/1.0 = off
     SCALE_MAX: 1.2              # reference paper: 0.8 / 1.2
+    SCALE_MODE: "iso"            # iso | aniso
+    SCALE_VOL_PRESERVE: False
     N_VIEWS: 2
     N_CLEAN_VIEWS: 1
 
@@ -80,6 +82,8 @@ TRAINER:
     INV_KIND: "h"               # h | f | kl
     INV_STOPGRAD: False
     ANCHOR_CLEAN: False
+
+    
     
     TEST_ROT_MODE: "none"       # none | so2 | so3 | axis_angle  (rotate TEST split at evaluation)
     TEST_ROT_MAX_DEG: 180.0
