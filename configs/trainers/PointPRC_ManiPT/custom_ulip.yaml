@@ -77,6 +77,7 @@ TRAINER:
     SUBSPACE_MODE: "sens"       # sens (M=P_rot) | complement (M=I-P_rot) | soft (M=D*Sigma/trSigma)
     SUBSPACE_K: 0               # 0 -> choose k by SUBSPACE_ENERGY
     SUBSPACE_ENERGY: 0.9
+    JITTER_STD: 0.0
  
     GAMMA_INV: 0.0              # idea 2 weight (invariance between the two views)
     INV_KIND: "h"               # h | f | kl

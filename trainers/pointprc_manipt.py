@@ -14,7 +14,7 @@ from .pointprc import load_ulip_to_cpu, TextEncoder, VLPromptLearner
 from .manipt_modules import (
     NormalizedAdditiveFusion, ManiPTLoss, calculate_manifold_drift,
     sample_rotations, apply_rotation, RotationSubspace, RotationInvarianceLoss,
-    sample_scales, apply_scale,corrupt_points,
+    sample_scales, apply_scale,corrupt_points,apply_jitter,
 )
 
 class CustomULIP_ManiPT(nn.Module):
@@ -178,11 +178,13 @@ class PointPRC_ManiPT(TrainerX):
                                                 rc.AUG_MAX_DROP, rc.AUG_JITTER))
                 else:
                     R = sample_rotations(pts.shape[0], self.rot_mode, rc.ROT_MAX_DEG,
-                         rc.ROT_AXIS, self.rot_gen, pts.device)
+                                        rc.ROT_AXIS, self.rot_gen, pts.device)
                     S = sample_scales(pts.shape[0], rc.SCALE_MIN, rc.SCALE_MAX,
                                     self.rot_gen, pts.device,
                                     mode=rc.SCALE_MODE, vol_preserve=rc.SCALE_VOL_PRESERVE)
-                    views.append(apply_rotation(apply_scale(pts, S), R))
+                    v = apply_rotation(apply_scale(pts, S), R)
+                    v = apply_jitter(v, rc.JITTER_STD, self.rot_gen)
+                    views.append(v)
         return views
  
     def _gamma_s_now(self):

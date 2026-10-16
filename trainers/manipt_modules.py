@@ -347,3 +347,13 @@ def corrupt_points(pts, gen, ops=("occ", "drop", "density", "outlier"),
             new = new + (jitter_std * torch.randn(N, 3, generator=gen)).clamp(-0.05, 0.05).to(new.device, new.dtype)
         out[b, :, :3] = new
     return out
+
+
+def apply_jitter(pts: torch.Tensor, std: float, gen, clip: float = 0.05) -> torch.Tensor:
+    if std is None or std <= 0:
+        return pts
+    B, N, C = pts.shape
+    noise = (std * torch.randn(B, N, 3, generator=gen)).clamp(-clip, clip)
+    out = pts.clone()
+    out[..., :3] = pts[..., :3] + noise.to(device=pts.device, dtype=pts.dtype)
+    return out
